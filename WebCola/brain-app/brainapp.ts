@@ -1131,6 +1131,8 @@ var loader = new (<any>THREE).OBJLoader(manager);
 var brainSurfaceColor: string = "0xe3e3e3";
 
 var saveObj = new SaveFile();
+var loadObj: SaveFile;
+
 var divLoadingNotification = document.createElement('div');
 divLoadingNotification.id = 'div-loading-notification';
 
@@ -1142,6 +1144,8 @@ initFromSaveFile();
 function initFromSaveFile() {
     var query = window.location.search.substring(1);
     if (query && query.length > 0) {
+        showLoadingNotification();
+
         var p = query.split("=");
         var json;
         if (p[0] == 'save') {
@@ -1151,7 +1155,7 @@ function initFromSaveFile() {
                 },
                 function (data, status) {
                     if (status.toLowerCase() == "success") {
-                        initApps(data);
+                        initProject(data);
                     }
                     else {
                         alert("Loading is: " + status + "\nData: " + data);
@@ -1161,23 +1165,21 @@ function initFromSaveFile() {
     }
 }
 
-function initApps(data: string) {
+function initProject(data: string) {
     if (data == null) return;
     if (data.length == 0) return;
 
-    var save = <SaveFile>jQuery.parseJSON(data);
+    loadObj = <SaveFile>jQuery.parseJSON(data);
 
     for (var i = 0; i < 4; i++) {
-        var app = save.saveApps[i];
+        var app = loadObj.saveApps[i];
         if ((app.surfaceModel != null) && (app.surfaceModel.length > 0)) {
             // if this app exists:
             //
             brainIconDraggableEvent(app.surfaceModel, app.view);
 
-            // should wait 1 second here...
-
             //
-            if (save.loadExampleData == true) {
+            if (loadObj.loadExampleData == true) {
                 loadExampleData();
             }
 
@@ -1185,11 +1187,19 @@ function initApps(data: string) {
             if ((app.setDataSetView != null) && (app.setDataSetView.length > 0)) {
                 setDataset1(app.setDataSetView);
             }
-            
-            //
-            setTimeout(apps[i].init(app), 2000);
         }
     }
+
+    setTimeout(function () { initApps() }, 5000);
+}
+
+function initApps() {
+    for (var i = 0; i < 4; i++) {
+        var app = loadObj.saveApps[i];
+        apps[i].init(app);
+    }
+
+    removeLoadingNotification();
 }
 
 function showLoadingNotification() {
@@ -1208,8 +1218,12 @@ function showLoadingNotification() {
     divLoadingNotification.style.backgroundColor = '#feeebd'; // the color of the control panel
 
     var text = document.createElement('div');
-    text.innerHTML = "Processing...";
+    text.innerHTML = "Loading...";
     divLoadingNotification.appendChild(text);
+
+    //var button = document.createElement('button');
+    //button.textContent = "continue";
+    //divLoadingNotification.appendChild(button);
 }
 
 function removeLoadingNotification() {

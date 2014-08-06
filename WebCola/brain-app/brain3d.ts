@@ -516,6 +516,7 @@ class Brain3DApp implements Application, Loopable {
 
     init(app: SaveApp) {
         //
+        console.log("init()->app.edgeCount:" + app.edgeCount);
         this.edgeCountSliderOnChange(app.edgeCount);
     }
 
@@ -2371,6 +2372,7 @@ class Brain3DApp implements Application, Loopable {
     restart() {
         if (!this.commonData.brainCoords || !this.dataSet || !this.dataSet.simMatrix || !this.dataSet.attributes) return;
 
+        console.log("restart() called.");
         // Sort the similarities into a list so we can filter edges
         this.sortedSimilarities = [];
         for (var i = 0; i < this.dataSet.simMatrix.length; ++i) {
