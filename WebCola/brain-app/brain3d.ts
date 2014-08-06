@@ -90,7 +90,7 @@ class Brain3DApp implements Application, Loopable {
     filteredAdjMatrix: number[][];
     selectedNodeID = -1;
 
-    lastSliderValue = 0;
+    edgeCountSliderValue = initialEdgesShown;
     surfaceLoaded: boolean = false;
 
     defaultFov: number;
@@ -509,6 +509,15 @@ class Brain3DApp implements Application, Loopable {
         if (!this.loop)
             this.loop = new Loop(this, 0.03);
     }   
+
+    save(app: SaveApp) {
+        app.edgeCount = this.edgeCountSliderValue;
+    }
+
+    init(app: SaveApp) {
+        //
+        this.edgeCountSliderOnChange(app.edgeCount);
+    }
 
     sliderMouseEvent(e: string) {
         if (e == "mousedown") {
@@ -1025,8 +1034,8 @@ class Brain3DApp implements Application, Loopable {
     }
 
     edgeCountSliderOnChange(numEdges) {
-        if (numEdges == this.lastSliderValue) return;
-        this.lastSliderValue = numEdges;
+        if (numEdges == this.edgeCountSliderValue) return;
+        this.edgeCountSliderValue = numEdges;
 
         if (this.bundlingEdges) this.edgesBundlingOnChange(); // turn off edge bundling
 

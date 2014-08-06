@@ -69,6 +69,8 @@ class DataSet {
 }
 
 class SaveFile {
+    loadExampleData: boolean = false;
+
     saveApps: SaveApp[];
 
     constructor() {
@@ -81,8 +83,15 @@ class SaveFile {
 }
 
 class SaveApp {
+    //
     surfaceModel: string;
     view: string;
+
+    //
+    setDataSetView: string;
+
+    // 
+    edgeCount: number;
 }
 
 // Parses, stores, and provides access to brain node attributes from a file
@@ -191,6 +200,8 @@ interface Application {
     setCircularBarColor(barNo: number, color: string);
     highlightSelectedNodes(filteredIDs: number[]);
     isDeleted();
+    save(saveApp: SaveApp);
+    init(saveApp: SaveApp);
 }
 
 class DummyApp implements Application {
@@ -206,6 +217,8 @@ class DummyApp implements Application {
     setCircularBarColor() { }
     highlightSelectedNodes() { }
     isDeleted() { }
+    save() { }
+    init() { }
 }
 
 // The loop class can be used to run applications that aren't event-based
@@ -331,6 +344,11 @@ $('#upload-attr-2 ').button().click(function () {
 });
 
 $('#button-save-app').button().click(function () {
+    for (var i = 0; i < 4; i++) {
+        var app = saveObj.saveApps[i];
+        apps[i].save(app);
+    }
+
     var saveJson = JSON.stringify(saveObj);
     $.post("saveapp.aspx",
         {
@@ -338,7 +356,8 @@ $('#button-save-app').button().click(function () {
         },
         function (data, status) {
             if (status.toLowerCase() == "success") {
-                prompt("The project is saved. Use the following URL to retrive the project:", "?save=" + data);
+                var url = document.URL.split('?')[0];              
+                prompt("The project is saved. Use the following URL to retrive the project:", url + "?save=" + data);
             }
             else {
                 alert("save: " + status);
@@ -351,6 +370,10 @@ var divNodeColorPickers;
 var divNodeColorPickersDiscrete;
 
 $('#load-example-data').button().click(function () {
+    loadExampleData();
+});
+
+function loadExampleData() {
     $.get('data/coords.txt', function (text) {
         parseCoordinates(text);
         $('#shared-coords').css({ color: 'green' });
@@ -371,11 +394,13 @@ $('#load-example-data').button().click(function () {
             $('#select-attribute').empty();
             for (var i = 0; i < dataSets[0].attributes.columnNames.length; ++i) {
                 var columnName = dataSets[0].attributes.columnNames[i];
-                $('#select-attribute').append('<option value = "' + columnName + '">' + columnName + '</option>');            }            $('#div-set-node-scale').css({ visibility: 'visible' });            $('#div-node-size').css({ visibility: 'visible' });            $('#div-node-color-pickers').css({ visibility: 'visible' });            $('#div-node-color-pickers-discrete').css({ visibility: 'visible' });                     if ($('#div-node-size').length > 0) divNodeSizeRange = $('#div-node-size').detach();            if ($('#div-node-color-pickers').length > 0) divNodeColorPickers = $('#div-node-color-pickers').detach();              if ($('#div-node-color-pickers-discrete').length > 0) divNodeColorPickersDiscrete = $('#div-node-color-pickers-discrete').detach();             //var attribute = $('#select-attribute').val();            //setupNodeSizeRangeSlider(attribute); // default option            $('#select-node-size-color').val('node-default');            $('#select-attribute').prop("disabled", "disabled");             setupCrossFilter(dataSets[0].attributes);        }   
+                $('#select-attribute').append('<option value = "' + columnName + '">' + columnName + '</option>');            }            $('#div-set-node-scale').css({ visibility: 'visible' });            $('#div-node-size').css({ visibility: 'visible' });            $('#div-node-color-pickers').css({ visibility: 'visible' });            $('#div-node-color-pickers-discrete').css({ visibility: 'visible' });            if ($('#div-node-size').length > 0) divNodeSizeRange = $('#div-node-size').detach();            if ($('#div-node-color-pickers').length > 0) divNodeColorPickers = $('#div-node-color-pickers').detach();            if ($('#div-node-color-pickers-discrete').length > 0) divNodeColorPickersDiscrete = $('#div-node-color-pickers-discrete').detach();            //var attribute = $('#select-attribute').val();            //setupNodeSizeRangeSlider(attribute); // default option            $('#select-node-size-color').val('node-default');            $('#select-attribute').prop("disabled", "disabled");            setupCrossFilter(dataSets[0].attributes);        }
     });
 
-    $('#load-example-data').button().prop("disabled", "disabled"); 
-});
+    $('#load-example-data').button().prop("disabled", "disabled");
+
+    saveObj.loadExampleData = true;
+}
 
 $('#button-apply-filter').button().click(function () {
     if (!dataSets[0].attributes.filteredRecords) return;
@@ -843,24 +868,38 @@ $('#dataset1-icon-front').draggable(
     {
         containment: 'body',
         stop: function (event) {
-            resetDataSet1();
-            switch (getViewUnderMouse(event.pageX, event.pageY)) {
-                case tl_view:
-                    if (apps[0]) apps[0].setDataSet(dataSets[0]);
-                    break;
-                case tr_view:
-                    if (apps[1]) apps[1].setDataSet(dataSets[0]);
-                    break;
-                case bl_view:
-                    if (apps[2]) apps[2].setDataSet(dataSets[0]);
-                    break;
-                case br_view:
-                    if (apps[3]) apps[3].setDataSet(dataSets[0]);
-                    break;
-            }
+            var view = getViewUnderMouse(event.pageX, event.pageY);
+            setDataset1(view);
         }
     }
 );
+
+function setDataset1(view: string) {
+    resetDataSet1();
+
+    var appID = -1;
+    switch (view) {
+        case tl_view:
+            if (apps[0]) apps[0].setDataSet(dataSets[0]);
+            appID = 0;
+            break;
+        case tr_view:
+            if (apps[1]) apps[1].setDataSet(dataSets[0]);
+            appID = 1;
+            break;
+        case bl_view:
+            if (apps[2]) apps[2].setDataSet(dataSets[0]);
+            appID = 2;
+            break;
+        case br_view:
+            if (apps[3]) apps[3].setDataSet(dataSets[0]);
+            appID = 3;
+            break;
+    }
+
+    saveObj.saveApps[appID].setDataSetView = view;
+}
+
 $('#dataset2-icon-front').draggable(
     {
         containment: 'body',
@@ -1092,8 +1131,10 @@ var loader = new (<any>THREE).OBJLoader(manager);
 var brainSurfaceColor: string = "0xe3e3e3";
 
 var saveObj = new SaveFile();
-initFromSaveFile();
+var divLoadingNotification = document.createElement('div');
+divLoadingNotification.id = 'div-loading-notification';
 
+initFromSaveFile();
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 // functions
@@ -1109,11 +1150,13 @@ function initFromSaveFile() {
                     filename: p[1]
                 },
                 function (data, status) {
-                alert("Loading is: " + status + "\nData: " + data);
-                if (status.toLowerCase() == "success") {
-                    initApps(data);
-                }
-            });
+                    if (status.toLowerCase() == "success") {
+                        initApps(data);
+                    }
+                    else {
+                        alert("Loading is: " + status + "\nData: " + data);
+                    }
+                });
         }
     }
 }
@@ -1128,9 +1171,50 @@ function initApps(data: string) {
         var app = save.saveApps[i];
         if ((app.surfaceModel != null) && (app.surfaceModel.length > 0)) {
             // if this app exists:
+            //
             brainIconDraggableEvent(app.surfaceModel, app.view);
+
+            // should wait 1 second here...
+
+            //
+            if (save.loadExampleData == true) {
+                loadExampleData();
+            }
+
+            //
+            if ((app.setDataSetView != null) && (app.setDataSetView.length > 0)) {
+                setDataset1(app.setDataSetView);
+            }
+            
+            //
+            setTimeout(apps[i].init(app), 2000);
         }
     }
+}
+
+function showLoadingNotification() {
+    //console.log("function: cursorWait()");
+    //$('body').css({ cursor: 'wait' });
+
+    document.body.appendChild(divLoadingNotification);
+    $('#div-loading-notification').empty(); // empty this.rightClickLabel
+
+    divLoadingNotification.style.position = 'absolute';
+    divLoadingNotification.style.left = '50%';
+    divLoadingNotification.style.top = '50%';
+    divLoadingNotification.style.padding = '5px';
+    divLoadingNotification.style.borderRadius = '2px';
+    divLoadingNotification.style.zIndex = '1';
+    divLoadingNotification.style.backgroundColor = '#feeebd'; // the color of the control panel
+
+    var text = document.createElement('div');
+    text.innerHTML = "Processing...";
+    divLoadingNotification.appendChild(text);
+}
+
+function removeLoadingNotification() {
+    if ($('#div-loading-notification').length > 0)
+        document.body.removeChild(divLoadingNotification);
 }
 
 // Load the brain surface (hardcoded - it is not simple to load geometry from the local machine, but this has not been deeply explored yet).
