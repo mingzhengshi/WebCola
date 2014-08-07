@@ -71,6 +71,15 @@ class DataSet {
 class SaveFile {
     loadExampleData: boolean = false;
 
+    // node size or color
+    nodeSizeOrColor: string;
+
+    nodeColorAttribute: string;
+    nodeColorDiscrete: string[];
+    nodeColorContinuousMin: string;
+    nodeColorContinuousMax: string;
+
+    // brain apps
     saveApps: SaveApp[];
 
     constructor() {
@@ -105,6 +114,9 @@ class SaveApp {
     circularBar2Attribute: string;
     circularBar1Color: string;
     circularBar2Color: string;
+    circularBar1Gradient: boolean;
+    circularBar2Gradient: boolean;
+    circularEdgeGradient: boolean;
 }
 
 // Parses, stores, and provides access to brain node attributes from a file
@@ -370,7 +382,7 @@ $('#button-save-app').button().click(function () {
         function (data, status) {
             if (status.toLowerCase() == "success") {
                 var url = document.URL.split('?')[0];              
-                prompt("The project is saved. Use the following URL to retrive the project:", url + "?save=" + data);
+                prompt("The project is saved. Use the following URL to restore the project:", url + "?save=" + data);
             }
             else {
                 alert("save: " + status);
@@ -485,6 +497,8 @@ function setNodeSizeOrColor() {
             if (apps[1]) apps[1].setNodeColorDiscrete(attribute, keyArray, colorArray);
             if (apps[2]) apps[2].setNodeColorDiscrete(attribute, keyArray, colorArray);
             if (apps[3]) apps[3].setNodeColorDiscrete(attribute, keyArray, colorArray);
+
+            saveObj.nodeColorDiscrete = colorArray.slice(0);
         }
         else {
             var minColor = $('#input-min-color').val();
@@ -497,7 +511,12 @@ function setNodeSizeOrColor() {
             if (apps[1]) apps[1].setNodeColor(attribute, minColor, maxColor);
             if (apps[2]) apps[2].setNodeColor(attribute, minColor, maxColor);
             if (apps[3]) apps[3].setNodeColor(attribute, minColor, maxColor);
+
+            saveObj.nodeColorContinuousMin = minColor;
+            saveObj.nodeColorContinuousMax = maxColor;
         }
+
+        saveObj.nodeColorAttribute = attribute;
     }
     else if (sizeOrColor == "node-default") {
         if (apps[0]) apps[0].setNodeDefaultSizeColor();
@@ -505,6 +524,8 @@ function setNodeSizeOrColor() {
         if (apps[2]) apps[2].setNodeDefaultSizeColor();
         if (apps[3]) apps[3].setNodeDefaultSizeColor();
     }
+
+    saveObj.nodeSizeOrColor = sizeOrColor;
 }
 
 function unique(sourceArray: any[]) {
@@ -518,14 +539,17 @@ function unique(sourceArray: any[]) {
 }
 
 $('#select-node-size-color').on('change', function () {
-    var value = $('#select-node-size-color').val();
+    selectNodeSizeColorOnChange();
+});
 
+function selectNodeSizeColorOnChange() {
+    var value = $('#select-node-size-color').val();
     var attribute = $('#select-attribute').val();
 
     if (value == "node-default") {
-        $('#select-attribute').prop("disabled", "disabled");   
-   
-        if ($('#div-node-size').length > 0) divNodeSizeRange = $('#div-node-size').detach();        if ($('#div-node-color-pickers').length > 0) divNodeColorPickers = $('#div-node-color-pickers').detach();        if ($('#div-node-color-pickers-discrete').length > 0) divNodeColorPickersDiscrete = $('#div-node-color-pickers-discrete').detach(); 
+        $('#select-attribute').prop("disabled", "disabled");
+
+        if ($('#div-node-size').length > 0) divNodeSizeRange = $('#div-node-size').detach();        if ($('#div-node-color-pickers').length > 0) divNodeColorPickers = $('#div-node-color-pickers').detach();        if ($('#div-node-color-pickers-discrete').length > 0) divNodeColorPickersDiscrete = $('#div-node-color-pickers-discrete').detach();
     }
     else if (value == "node-size") {
         $('#select-attribute').prop('disabled', false);
@@ -544,7 +568,7 @@ $('#select-node-size-color').on('change', function () {
     }
 
     setNodeSizeOrColor();
-});
+}
 
 $('#select-attribute').on('change', function () {
     var sizeOrColor = $('#select-node-size-color').val();
@@ -1211,6 +1235,41 @@ function initApps() {
         var app = loadObj.saveApps[i];
         if ((app.surfaceModel != null) && (app.surfaceModel.length > 0)) {
             apps[i].init(app);
+        }
+    }
+
+    if ((loadObj.nodeSizeOrColor != null) && (loadObj.nodeSizeOrColor.length > 0)) {
+        if (loadObj.nodeSizeOrColor == "node-size") {
+            // 1. set node color
+
+            // 2. set node size
+        }
+        else if (loadObj.nodeSizeOrColor == "node-color") {
+            // 1. set node size
+
+            // 2. update html elements
+            $('#select-node-size-color').val(loadObj.nodeSizeOrColor);
+            $('#select-attribute').val(loadObj.nodeColorAttribute);
+            selectNodeSizeColorOnChange();
+
+            // 3. set node color         
+            if ((loadObj.nodeColorAttribute != null) && (loadObj.nodeColorAttribute.length > 0)) {
+
+                if (loadObj.nodeColorAttribute == "module_id") {
+                    var keySelection = <any>document.getElementById('select-node-key');
+
+                    for (var i = 0; i < keySelection.length; i++) {
+                        keySelection.options[i].style.backgroundColor = loadObj.nodeColorDiscrete[i];
+                    }
+
+                    (<any>document.getElementById('input-node-color')).color.fromString(loadObj.nodeColorDiscrete[0].substring(1));
+
+                    setNodeSizeOrColor();
+                }
+                else {
+
+                }
+            }
         }
     }
 
