@@ -83,15 +83,28 @@ class SaveFile {
 }
 
 class SaveApp {
-    //
+    //---
     surfaceModel: string;
     view: string;
 
-    //
+    //---
     setDataSetView: string;
 
-    // 
+    //---
     edgeCount: number;
+
+    //---
+    showingTopologyNetwork: boolean;
+    networkType: string;
+
+    // circular layout:
+    circularBundleAttribute: string;
+    circularSortAttribute: string;
+    circularLableAttribute: string;
+    circularBar1Attribute: string;
+    circularBar2Attribute: string;
+    circularBar1Color: string;
+    circularBar2Color: string;
 }
 
 // Parses, stores, and provides access to brain node attributes from a file
@@ -346,7 +359,7 @@ $('#upload-attr-2 ').button().click(function () {
 $('#button-save-app').button().click(function () {
     for (var i = 0; i < 4; i++) {
         var app = saveObj.saveApps[i];
-        apps[i].save(app);
+        if (apps[i]) apps[i].save(app);
     }
 
     var saveJson = JSON.stringify(saveObj);
@@ -1190,13 +1203,15 @@ function initProject(data: string) {
         }
     }
 
-    setTimeout(function () { initApps() }, 5000);
+    setTimeout(function () { initApps() }, 3000);
 }
 
 function initApps() {
     for (var i = 0; i < 4; i++) {
         var app = loadObj.saveApps[i];
-        apps[i].init(app);
+        if ((app.surfaceModel != null) && (app.surfaceModel.length > 0)) {
+            apps[i].init(app);
+        }
     }
 
     removeLoadingNotification();
