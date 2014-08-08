@@ -74,6 +74,10 @@ class SaveFile {
     // node size or color
     nodeSizeOrColor: string;
 
+    nodeSizeAttribute: string;
+    nodeSizeMin: number;
+    nodeSizeMax: number;
+
     nodeColorAttribute: string;
     nodeColorDiscrete: string[];
     nodeColorContinuousMin: string;
@@ -477,6 +481,10 @@ function setNodeSizeOrColor() {
         if (apps[1]) apps[1].setNodeSize(newScaleArray);
         if (apps[2]) apps[2].setNodeSize(newScaleArray);
         if (apps[3]) apps[3].setNodeSize(newScaleArray);
+
+        saveObj.nodeSizeMin = minNewScale;
+        saveObj.nodeSizeMax = maxNewScale;
+        saveObj.nodeSizeAttribute = attribute;
     }
     else if (sizeOrColor == "node-color") {
         if (attribute == "module_id") {
@@ -1238,42 +1246,67 @@ function initApps() {
         }
     }
 
+    // init the node size and color given the current UI. The UI needs to be redesigned.
     if ((loadObj.nodeSizeOrColor != null) && (loadObj.nodeSizeOrColor.length > 0)) {
         if (loadObj.nodeSizeOrColor == "node-size") {
-            // 1. set node color
+            // 1. init node color
+            initNodeColor();
 
-            // 2. set node size
+            // 2. init node size
+            initNodeSize();
         }
         else if (loadObj.nodeSizeOrColor == "node-color") {
-            // 1. set node size
-
-            // 2. update html elements
-            $('#select-node-size-color').val(loadObj.nodeSizeOrColor);
-            $('#select-attribute').val(loadObj.nodeColorAttribute);
-            selectNodeSizeColorOnChange();
-
-            // 3. set node color         
-            if ((loadObj.nodeColorAttribute != null) && (loadObj.nodeColorAttribute.length > 0)) {
-
-                if (loadObj.nodeColorAttribute == "module_id") {
-                    var keySelection = <any>document.getElementById('select-node-key');
-
-                    for (var i = 0; i < keySelection.length; i++) {
-                        keySelection.options[i].style.backgroundColor = loadObj.nodeColorDiscrete[i];
-                    }
-
-                    (<any>document.getElementById('input-node-color')).color.fromString(loadObj.nodeColorDiscrete[0].substring(1));
-
-                    setNodeSizeOrColor();
-                }
-                else {
-
-                }
-            }
+            // 1. init node size
+            initNodeSize();
+            
+            // 2. init node color         
+            initNodeColor();
         }
     }
 
     removeLoadingNotification();
+}
+
+function initNodeSize() {
+    if ((loadObj.nodeSizeAttribute != null) && (loadObj.nodeSizeAttribute.length > 0)) {
+        $('#select-node-size-color').val("node-size");
+        $('#select-attribute').val(loadObj.nodeSizeAttribute);
+        selectNodeSizeColorOnChange();
+
+        //$("#div-node-size-slider").slider("option", "values", [loadObj.nodeSizeMin, loadObj.nodeSizeMax]);
+        $("#div-node-size-slider").slider('values', 0, loadObj.nodeSizeMin); 
+        $("#div-node-size-slider").slider('values', 1, loadObj.nodeSizeMax);
+        $("#div-node-size-slider").slider({ values: [loadObj.nodeSizeMin, loadObj.nodeSizeMax] });
+        $("#label_node_size_range").text($("#div-node-size-slider").slider("values", 0) + " - " + $("#div-node-size-slider").slider("values", 1));
+
+        setNodeSizeOrColor();
+    }
+}
+
+function initNodeColor() {
+    if ((loadObj.nodeColorAttribute != null) && (loadObj.nodeColorAttribute.length > 0)) {
+        $('#select-node-size-color').val("node-color");
+        $('#select-attribute').val(loadObj.nodeColorAttribute);
+        selectNodeSizeColorOnChange();
+
+        if (loadObj.nodeColorAttribute == "module_id") {
+            var keySelection = <any>document.getElementById('select-node-key');
+
+            for (var i = 0; i < keySelection.length; i++) {
+                keySelection.options[i].style.backgroundColor = loadObj.nodeColorDiscrete[i];
+            }
+
+            (<any>document.getElementById('input-node-color')).color.fromString(loadObj.nodeColorDiscrete[0].substring(1));
+
+            setNodeSizeOrColor();
+        }
+        else {
+            (<any>document.getElementById('input-min-color')).color.fromString(loadObj.nodeColorContinuousMin.substring(1));
+            (<any>document.getElementById('input-max-color')).color.fromString(loadObj.nodeColorContinuousMax.substring(1));
+
+            setNodeSizeOrColor();
+        }
+    }
 }
 
 function showLoadingNotification() {
