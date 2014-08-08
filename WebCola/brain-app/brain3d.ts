@@ -524,12 +524,12 @@ class Brain3DApp implements Application, Loopable {
         app.circularEdgeGradient = this.circularEdgeGradient;
     }
 
-    init(app: SaveApp) {
-        //---
+    initEdgeCountSlider(app: SaveApp) {
         this.edgeCountSliderOnChange(app.edgeCount);
         $('#edge-count-slider-' + this.id).val(<any>app.edgeCount);
+    }
 
-        //---
+    initShowNetwork(app: SaveApp) {
         if (app.showingTopologyNetwork) {
             $('#select-network-type-' + this.id).val(app.networkType);
             this.networkTypeOnChange(app.networkType);

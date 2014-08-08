@@ -83,6 +83,9 @@ class SaveFile {
     nodeColorContinuousMin: string;
     nodeColorContinuousMax: string;
 
+    // cross filter
+    filteredRecords: any[];
+
     // brain apps
     saveApps: SaveApp[];
 
@@ -129,7 +132,7 @@ class Attributes {
     columnNames: string[];
     numRecords: number;
 
-    filteredRecords: Array<number>;
+    filteredRecords: any[];
     filteredRecordsHighlightChanged: boolean = false;
 
     constructor(text: string) {
@@ -230,7 +233,9 @@ interface Application {
     highlightSelectedNodes(filteredIDs: number[]);
     isDeleted();
     save(saveApp: SaveApp);
-    init(saveApp: SaveApp);
+    //init(saveApp: SaveApp);
+    initEdgeCountSlider(saveApp: SaveApp);
+    initShowNetwork(saveApp: SaveApp);
 }
 
 class DummyApp implements Application {
@@ -247,7 +252,9 @@ class DummyApp implements Application {
     highlightSelectedNodes() { }
     isDeleted() { }
     save() { }
-    init() { }
+    //init() { }
+    initEdgeCountSlider() { }
+    initShowNetwork() { }
 }
 
 // The loop class can be used to run applications that aren't event-based
@@ -432,6 +439,10 @@ function loadExampleData() {
 }
 
 $('#button-apply-filter').button().click(function () {
+    applyFilterButtonOnClick();
+});
+
+function applyFilterButtonOnClick() {
     if (!dataSets[0].attributes.filteredRecords) return;
 
     var fRecords = dataSets[0].attributes.filteredRecords;
@@ -440,13 +451,15 @@ $('#button-apply-filter').button().click(function () {
     for (var i = 0; i < fRecords.length; ++i) {
         var id = fRecords[i]["index"];
         idArray.push(id);
-    } 
+    }
 
     if (apps[0]) apps[0].applyFilter(idArray);
     if (apps[1]) apps[1].applyFilter(idArray);
     if (apps[2]) apps[2].applyFilter(idArray);
     if (apps[3]) apps[3].applyFilter(idArray);
-});
+
+    saveObj.filteredRecords = dataSets[0].attributes.filteredRecords;
+}
 
 $('#button-set-node-size-color').button().click(function () {
     setNodeSizeOrColor();
@@ -1239,27 +1252,36 @@ function initProject(data: string) {
 }
 
 function initApps() {
+    // init edge count
     for (var i = 0; i < 4; i++) {
         var app = loadObj.saveApps[i];
         if ((app.surfaceModel != null) && (app.surfaceModel.length > 0)) {
-            apps[i].init(app);
+            apps[i].initEdgeCountSlider(app); 
+        }
+    }
+
+    // init cross filter
+    if ((loadObj.filteredRecords != null) && (loadObj.filteredRecords.length > 0)) {
+        dataSets[0].attributes.filteredRecords = loadObj.filteredRecords.slice(0);
+        applyFilterButtonOnClick();
+    }
+
+    // init show network
+    for (var i = 0; i < 4; i++) {
+        var app = loadObj.saveApps[i];
+        if ((app.surfaceModel != null) && (app.surfaceModel.length > 0)) {
+            apps[i].initShowNetwork(app);
         }
     }
 
     // init the node size and color given the current UI. The UI needs to be redesigned.
     if ((loadObj.nodeSizeOrColor != null) && (loadObj.nodeSizeOrColor.length > 0)) {
         if (loadObj.nodeSizeOrColor == "node-size") {
-            // 1. init node color
             initNodeColor();
-
-            // 2. init node size
             initNodeSize();
         }
         else if (loadObj.nodeSizeOrColor == "node-color") {
-            // 1. init node size
-            initNodeSize();
-            
-            // 2. init node color         
+            initNodeSize();   
             initNodeColor();
         }
     }
