@@ -628,6 +628,7 @@ class Brain3DApp implements Application, Loopable {
             var varCircularLayoutBarGradientOnChange = (barNo: number, b: boolean) => { this.circularLayoutBarGradientOnChange(barNo, b); };
 
             //------------------------------------------------------------------------
+            /*
             this.jDiv.append($('<label class=' + this.circularCSSClass + '> bundle:</label>'));
             this.jDiv.append($('<select id="select-circular-layout-bundle-' + this.id + '" class=' + this.circularCSSClass + '></select>')
                 .css({ 'margin-left': '5px', 'font-size': '12px', 'width': '80px' })
@@ -660,7 +661,7 @@ class Brain3DApp implements Application, Loopable {
             for (var i = 0; i < this.dataSet.attributes.columnNames.length; ++i) {
                 var columnName = this.dataSet.attributes.columnNames[i];
                 $('#select-circular-layout-sort-' + this.id).append('<option value = "' + columnName + '">' + columnName + '</option>');            }
-
+            */
             //------------------------------------------------------------------------
             // option button
             this.jDiv.append($('<button id="button-circular-layout-histogram-' + this.id + '" class=' + this.circularCSSClass + '>options</button>')
@@ -678,6 +679,42 @@ class Brain3DApp implements Application, Loopable {
             // menu
             this.jDiv.append($('<div id="div-circular-layout-menu-' + this.id + '" class=' + this.circularCSSClass + '></div>')
                 .css({ 'display': 'none', 'background-color': '#feeebd', 'position': 'absolute', 'padding': '8px', 'border-radius': '5px' }));
+
+            //------------------------------------------------------------------------
+            // menu - bundle
+            $('#div-circular-layout-menu-' + this.id).append('<div id="div-circular-bundle-' + this.id + '">bundle: </div>');
+            $('#div-circular-bundle-' + this.id).append($('<select id="select-circular-layout-bundle-' + this.id + '" class=' + this.circularCSSClass + '></select>')
+                .css({ 'margin-left': '5px', 'margin-bottom': '5px', 'font-size': '12px', 'width': '80px', 'background-color': '#feeebd' })
+                .on("change", function () { varCircularLayoutBundleOnChange($(this).val()); }));
+
+            $('#select-circular-layout-bundle-' + this.id).empty();
+
+            var option = document.createElement('option');
+            option.text = 'none';
+            option.value = 'none';
+            $('#select-circular-layout-bundle-' + this.id).append(option);
+
+            for (var i = 0; i < this.dataSet.attributes.columnNames.length; ++i) {
+                var columnName = this.dataSet.attributes.columnNames[i];
+                $('#select-circular-layout-bundle-' + this.id).append('<option value = "' + columnName + '">' + columnName + '</option>');            }
+
+            //------------------------------------------------------------------------
+            // menu - sort
+            $('#div-circular-layout-menu-' + this.id).append('<div id="div-circular-sort-' + this.id + '">sort: </div>');
+            $('#div-circular-sort-' + this.id).append($('<select id="select-circular-layout-sort-' + this.id + '" class=' + this.circularCSSClass + '></select>')
+                .css({ 'margin-left': '5px', 'margin-bottom': '5px', 'font-size': '12px', 'width': '80px', 'background-color': '#feeebd' })
+                .on("change", function () { varCircularLayoutSortOnChange($(this).val()); }));
+
+            $('#select-circular-layout-sort-' + this.id).empty();
+
+            var option = document.createElement('option');
+            option.text = 'none';
+            option.value = 'none';
+            $('#select-circular-layout-sort-' + this.id).append(option);
+
+            for (var i = 0; i < this.dataSet.attributes.columnNames.length; ++i) {
+                var columnName = this.dataSet.attributes.columnNames[i];
+                $('#select-circular-layout-sort-' + this.id).append('<option value = "' + columnName + '">' + columnName + '</option>');            }
 
             //------------------------------------------------------------------------
             // menu - label
