@@ -327,7 +327,7 @@ $('#control-panel').tabs({
 });
 
 //$('#accordion').accordion({ heightStyle: 'fill' });
-$('#accordion').accordion({ heightStyle: 'content' });
+//$('#accordion').accordion({ heightStyle: 'content' });
 
 // Set up data upload buttons
 $('#select-coords').button();
@@ -362,6 +362,9 @@ $('#upload-attr-1').button().click(function () {
         $('#d1-att').css({ color: 'green' });
     }
 });
+
+$("#div-load-data-options").buttonset().css({ width: '165px' });
+//$("#div-load-data-options").css({ width: '165px' });
 /*
 $('#select-matrix-2').button();
 $('#upload-matrix-2').button().click(function () {
@@ -414,19 +417,31 @@ $('#load-example-data').button().click(function () {
 function loadExampleData() {
     $.get('data/coords.txt', function (text) {
         parseCoordinates(text);
-        $('#shared-coords').css({ color: 'green' });
+        //$('#shared-coords').css({ color: 'green' });
+        $('#label-coords')
+            .text("default data")
+            .css({ color: 'green' });
     });
     $.get('data/labels.txt', function (text) {
         parseLabels(text);
-        $('#shared-labels').css({ color: 'green' });
+        //$('#shared-labels').css({ color: 'green' });
+        $('#label-similarity-matrix')
+            .text("default data")
+            .css({ color: 'green' });
     });
     $.get('data/mat1.txt', function (text) {
         parseSimilarityMatrix(text, dataSets[0]);
-        $('#d1-mat').css({ color: 'green' });
+        //$('#d1-mat').css({ color: 'green' });
+        $('#label-attributes')
+            .text("default data")
+            .css({ color: 'green' });
     });
     $.get('data/attributes1.txt', function (text) {
         parseAttributes(text, dataSets[0]);
-        $('#d1-att').css({ color: 'green' });
+        //$('#d1-att').css({ color: 'green' });
+        $('#label-labels')
+            .text("default data")
+            .css({ color: 'green' });
 
         if (dataSets[0].attributes) {
             $('#select-attribute').empty();

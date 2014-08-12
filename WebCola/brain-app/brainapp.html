@@ -31,9 +31,10 @@
         }
 
         h3 {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             line-height: normal;
+            margin-bottom: 5px;
         }
 
         #control-panel {
@@ -98,6 +99,12 @@
             bottom: 0px;
             right: 0px;
             background-color: #d2ffbd;
+        }
+
+        .h3-span {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .view {
@@ -307,22 +314,24 @@
             </div>
         </div>
         <div id="tab-2" class="tab">
-            <h3>Coordinates</h3>
-            <input id="select-coords" style="font-size:10px; width: 160px;" type="file" />
+            <span class="h3-span">Coordinates: </span><span id="label-coords">empty</span>
+            <input id="select-coords" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
             <button id="upload-coords" style="font-size:10px;">Upload</button>
-
-            <h3>Similarity Matrix</h3>
-            <input id="select-matrix-1" style="font-size:10px; width: 160px;" type="file" />
+            <br />
+            <br />
+            <span class="h3-span">Similarity Matrix: </span><span id="label-similarity-matrix">empty</span>
+            <input id="select-matrix-1" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
             <button id="upload-matrix-1" style="font-size:10px;">Upload</button>
-
-            <h3>Attributes</h3>
-            <input id="select-attr-1" style="font-size:10px; width: 160px;" type="file" />
+            <br />
+            <br />
+            <span class="h3-span">Attributes: </span><span id="label-attributes">empty</span>
+            <input id="select-attr-1" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
             <button id="upload-attr-1" style="font-size:10px;">Upload</button>
-
-            <h3>Labels</h3>
-            <input id="select-labels" style="font-size:10px; width: 160px;" type="file" />
+            <br />
+            <br />
+            <span class="h3-span">Labels (optional): </span><span id="label-labels">empty</span>
+            <input id="select-labels" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
             <button id="upload-labels" style="font-size:10px;">Upload</button>
-
             <br />
             <br />
 
@@ -361,8 +370,18 @@
                     <br />
                 </div>
             </div-->
+            <div id="div-load-data-options" style="width: 180px">
+                <input type="radio" id="radio1" name="radio"><label for="radio1">Choice 1</label>
+                <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">Choice 2</label>
+            </div>
+            <br />
+            <br />
             <button id="load-example-data">Load Example Data</button>
-            <h2>Shared Data</h2>
+            <br />
+            <br />
+            <br />
+            <div id="dataset1-icon-back" class="icon"></div>
+            <!--h2>Shared Data</h2>
             <p id="shared-coords" class="dataset-component">Coordinates</p>
             <p id="shared-labels" class="dataset-component">Labels</p>
             <br />
@@ -371,7 +390,7 @@
                 <p id="d1-mat" class="dataset-component">Similarity Matrix</p>
                 <p id="d1-att" class="dataset-component">Attributes</p>
             </div>
-            <!--div class="dataset-info">
+            <div class="dataset-info">
                 <div id="dataset2-icon-back" class="icon"></div>
                 <p id="d2-mat" class="dataset-component">Similarity Matrix</p>
                 <p id="d2-att" class="dataset-component">Attributes</p>
@@ -443,34 +462,6 @@
                 </p>
             </div>
         </div>
-        <!--div id="tab-4" class="tab">
-            <h3>How to use this application</h3>
-            <p>
-                In the data tab, select the data files from the local machine. In the visualisation tab,
-                you can drag one of the available visualisations into any of the four views. The visualisation
-                won't display until you drag one of the data sets (the blue boxes in the data tab) into the view as well.
-                All the necessary data for a visualisation must have been loaded, or else it will not be
-                displayed.
-            </p>
-            <p>
-                To resize the views, drag the black pin around.
-            </p>
-            <p>
-                To direct keyboard / Leap input to a particular view, you must select it with the mouse.
-                The currently-selected view has a black border around it.
-            </p>
-            <br />
-            <h3>"Brain 3D" application controls</h3>
-            <p>
-                Drag the slider to select the number of edges you want in the thresholded graph. Then press space
-                to view the graph. You can rotate the view with the WASD keys, and moving the mouse over a node will
-                enlarge that node in both graphs.
-            </p>
-            <p>
-                There is very limited Leap Motion support available. You can pan your hand around to rotate the view,
-                and you can point at a node to enlarge it.
-            </p>
-        </!--div-->
     </div>
 
     <div id="control-panel-bottom">
