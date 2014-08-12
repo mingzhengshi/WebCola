@@ -315,13 +315,13 @@ $('#control-panel').tabs({
         if (ui.newPanel[0].id == 'tab-2') {
             // Reset data set icon positions
             resetDataSet1();
-            resetDataSet2();
+            //resetDataSet2();
             $('#dataset1-icon-front').show();
-            $('#dataset2-icon-front').show();
+            //$('#dataset2-icon-front').show();
         }
         else {
             $('#dataset1-icon-front').hide();
-            $('#dataset2-icon-front').hide();
+            //$('#dataset2-icon-front').hide();
         }
     }
 });
@@ -362,6 +362,7 @@ $('#upload-attr-1').button().click(function () {
         $('#d1-att').css({ color: 'green' });
     }
 });
+/*
 $('#select-matrix-2').button();
 $('#upload-matrix-2').button().click(function () {
     var file = (<any>$('#select-matrix-2').get(0)).files[0];
@@ -378,6 +379,7 @@ $('#upload-attr-2 ').button().click(function () {
         $('#d2-att').css({ color: 'green' });
     }
 });
+*/
 
 $('#button-save-app').button().click(function () {
     for (var i = 0; i < 4; i++) {
@@ -958,6 +960,7 @@ function setDataset1(view: string) {
     saveObj.saveApps[appID].setDataSetView = view;
 }
 
+/*
 $('#dataset2-icon-front').draggable(
     {
         containment: 'body',
@@ -980,6 +983,7 @@ $('#dataset2-icon-front').draggable(
         }
     }
 );
+*/
 
 $('#checkbox_yoking_view').on('change', function () {
     if ($('#checkbox_yoking_view').is(":checked")) {
@@ -1000,11 +1004,11 @@ function resetIcon(object: string, location: string) {
 
 var resetBrain3D = resetIcon('#brain3d-icon-front', '#brain3d-icon-back');
 var resetDataSet1 = resetIcon('#dataset1-icon-front', '#dataset1-icon-back');
-var resetDataSet2 = resetIcon('#dataset2-icon-front', '#dataset2-icon-back');
+//var resetDataSet2 = resetIcon('#dataset2-icon-front', '#dataset2-icon-back');
 
 // Data set icons are visible when the page loads - reset them immediately
 resetDataSet1();
-resetDataSet2();
+//resetDataSet2();
 
 var visIcons = [$('#brain3d-icon-front')];
 
@@ -1025,7 +1029,7 @@ function hideVisIcons() {
 resetBrain3D();
 showVisIcons();
 $('#dataset1-icon-front').hide();
-$('#dataset2-icon-front').hide();
+//$('#dataset2-icon-front').hide();
 
 var apps = Array<Application>(new DummyApp(), new DummyApp(), new DummyApp(), new DummyApp());
 
