@@ -314,24 +314,32 @@
             </div>
         </div>
         <div id="tab-2" class="tab">
+            <div id="div-load-data-options">
+                <input type="radio" id="radio-load-default-data" name="radio" style="width: 120px" checked="checked"><label for="radio-load-default-data" style="width: 120px; font-size:10px;">Default Data</label>
+                <input type="radio" id="radio-upload-data" name="radio" style="width: 120px"><label for="radio-upload-data" style="width:120px; font-size:10px;">Upload Data</label>
+            </div>
+            <br />
+            <button id="load-example-data" style="font-size:10px;">Load Default Data</button>
+            <br />
+            <br />
             <span class="h3-span">Coordinates: </span><span id="label-coords">empty</span>
-            <input id="select-coords" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
-            <button id="upload-coords" style="font-size:10px;">Upload</button>
+            <input id="select-coords" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" disabled="disabled" />
+            <button id="upload-coords" style="font-size:10px;" disabled="disabled">Upload</button>
             <br />
             <br />
             <span class="h3-span">Similarity Matrix: </span><span id="label-similarity-matrix">empty</span>
-            <input id="select-matrix-1" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
-            <button id="upload-matrix-1" style="font-size:10px;">Upload</button>
+            <input id="select-matrix-1" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" disabled="disabled" />
+            <button id="upload-matrix-1" style="font-size:10px;" disabled="disabled">Upload</button>
             <br />
             <br />
             <span class="h3-span">Attributes: </span><span id="label-attributes">empty</span>
-            <input id="select-attr-1" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
-            <button id="upload-attr-1" style="font-size:10px;">Upload</button>
+            <input id="select-attr-1" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" disabled="disabled" />
+            <button id="upload-attr-1" style="font-size:10px;" disabled="disabled">Upload</button>
             <br />
             <br />
             <span class="h3-span">Labels (optional): </span><span id="label-labels">empty</span>
-            <input id="select-labels" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" />
-            <button id="upload-labels" style="font-size:10px;">Upload</button>
+            <input id="select-labels" style="font-size:10px; width: 160px; margin-top: 5px;" type="file" disabled="disabled" />
+            <button id="upload-labels" style="font-size:10px;" disabled="disabled">Upload</button>
             <br />
             <br />
 
@@ -370,17 +378,11 @@
                     <br />
                 </div>
             </div-->
-            <div id="div-load-data-options" style="width: 180px">
-                <input type="radio" id="radio1" name="radio"><label for="radio1">Choice 1</label>
-                <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">Choice 2</label>
+            <br />
+            <br />
+            <div class="dataset-info">
+                <div id="dataset1-icon-back" class="icon"></div>
             </div>
-            <br />
-            <br />
-            <button id="load-example-data">Load Example Data</button>
-            <br />
-            <br />
-            <br />
-            <div id="dataset1-icon-back" class="icon"></div>
             <!--h2>Shared Data</h2>
             <p id="shared-coords" class="dataset-component">Coordinates</p>
             <p id="shared-labels" class="dataset-component">Labels</p>

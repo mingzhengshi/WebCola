@@ -363,7 +363,40 @@ $('#upload-attr-1').button().click(function () {
     }
 });
 
-$("#div-load-data-options").buttonset().css({ width: '165px' });
+$("#div-load-data-options").buttonset();
+$("#div-load-data-options").click(function () {
+    if ($("#radio-load-default-data").is(":checked")) {
+        $('#load-example-data').button({ disabled: false });
+
+        $('#select-coords').button({ disabled: true });
+        $('#upload-coords').button({ disabled: true });
+
+        $('#select-matrix-1').button({ disabled: true });
+        $('#upload-matrix-1').button({ disabled: true });
+
+        $('#select-attr-1').button({ disabled: true });
+        $('#upload-attr-1').button({ disabled: true });
+
+        $('#select-labels').button({ disabled: true });
+        $('#upload-labels').button({ disabled: true });
+    }
+    else if ($("#radio-upload-data").is(":checked")) {
+        $('#load-example-data').button({ disabled: true });
+
+        $('#select-coords').button({ disabled: false });
+        $('#upload-coords').button({ disabled: false });
+
+        $('#select-matrix-1').button({ disabled: false });
+        $('#upload-matrix-1').button({ disabled: false });
+
+        $('#select-attr-1').button({ disabled: false });
+        $('#upload-attr-1').button({ disabled: false });
+
+        $('#select-labels').button({ disabled: false });
+        $('#upload-labels').button({ disabled: false });
+    }
+});
+
 //$("#div-load-data-options").css({ width: '165px' });
 /*
 $('#select-matrix-2').button();
@@ -972,7 +1005,9 @@ function setDataset1(view: string) {
             break;
     }
 
-    saveObj.saveApps[appID].setDataSetView = view;
+    if (appID != -1) {
+        saveObj.saveApps[appID].setDataSetView = view;
+    }
 }
 
 /*
