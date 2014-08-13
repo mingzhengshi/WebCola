@@ -326,42 +326,30 @@ $('#control-panel').tabs({
     }
 });
 
+$('#button-save-app').button().click(function () {
+    for (var i = 0; i < 4; i++) {
+        var app = saveObj.saveApps[i];
+        if (apps[i]) apps[i].save(app);
+    }
+
+    var saveJson = JSON.stringify(saveObj);
+    $.post("saveapp.aspx",
+        {
+            save: saveJson
+        },
+        function (data, status) {
+            if (status.toLowerCase() == "success") {
+                var url = document.URL.split('?')[0];
+                prompt("The project is saved. Use the following URL to restore the project:", url + "?save=" + data);
+            }
+            else {
+                alert("save: " + status);
+            }
+        });
+});
+
 //$('#accordion').accordion({ heightStyle: 'fill' });
 //$('#accordion').accordion({ heightStyle: 'content' });
-
-// Set up data upload buttons
-$('#select-coords').button();
-$('#upload-coords').button().click(function () {
-    var file = (<any>$('#select-coords').get(0)).files[0];
-    if (file) {
-        loadCoordinates(file);
-        $('#shared-coords').css({ color: 'green' });
-    }
-});
-$('#select-labels').button();
-$('#upload-labels').button().click(function () {
-    var file = (<any>$('#select-labels').get(0)).files[0];
-    if (file) {
-        loadLabels(file);
-        $('#shared-labels').css({ color: 'green' });
-    }
-});
-$('#select-matrix-1').button();
-$('#upload-matrix-1').button().click(function () {
-    var file = (<any>$('#select-matrix-1').get(0)).files[0];
-    if (file) {
-        loadSimilarityMatrix(file, dataSets[0]);
-        $('#d1-mat').css({color: 'green'});
-    }
-});
-$('#select-attr-1').button();
-$('#upload-attr-1').button().click(function () {
-    var file = (<any>$('#select-attr-1').get(0)).files[0];
-    if (file) {
-        loadAttributes(file, dataSets[0]);
-        $('#d1-att').css({ color: 'green' });
-    }
-});
 
 $("#div-load-data-options").buttonset();
 $("#div-load-data-options").click(function () {
@@ -397,7 +385,54 @@ $("#div-load-data-options").click(function () {
     }
 });
 
-//$("#div-load-data-options").css({ width: '165px' });
+// Set up data upload buttons
+$('#select-coords').button();
+$('#upload-coords').button().click(function () {
+    var file = (<any>$('#select-coords').get(0)).files[0];
+    if (file) {
+        loadCoordinates(file);
+        //$('#shared-coords').css({ color: 'green' });
+        $('#label-coords')
+            .text("uploaded")
+            .css({ color: 'green' });
+    }
+});
+$('#select-matrix-1').button();
+$('#upload-matrix-1').button().click(function () {
+    var file = (<any>$('#select-matrix-1').get(0)).files[0];
+    if (file) {
+        loadSimilarityMatrix(file, dataSets[0]);
+        //$('#d1-mat').css({color: 'green'});
+        $('#label-similarity-matrix')
+            .text("uploaded")
+            .css({ color: 'green' });
+    }
+});
+$('#select-attr-1').button();
+$('#upload-attr-1').button().click(function () {
+    var file = (<any>$('#select-attr-1').get(0)).files[0];
+    if (file) {
+        loadAttributes(file, dataSets[0]);
+        //$('#d1-att').css({ color: 'green' });
+        $('#label-attributes')
+            .text("uploaded")
+            .css({ color: 'green' });
+
+        setupAttributeTab();
+    }
+});
+$('#select-labels').button();
+$('#upload-labels').button().click(function () {
+    var file = (<any>$('#select-labels').get(0)).files[0];
+    if (file) {
+        loadLabels(file);
+        //$('#shared-labels').css({ color: 'green' });
+        $('#label-labels')
+            .text("uploaded")
+            .css({ color: 'green' });
+    }
+});
+
 /*
 $('#select-matrix-2').button();
 $('#upload-matrix-2').button().click(function () {
@@ -417,28 +452,6 @@ $('#upload-attr-2 ').button().click(function () {
 });
 */
 
-$('#button-save-app').button().click(function () {
-    for (var i = 0; i < 4; i++) {
-        var app = saveObj.saveApps[i];
-        if (apps[i]) apps[i].save(app);
-    }
-
-    var saveJson = JSON.stringify(saveObj);
-    $.post("saveapp.aspx",
-        {
-            save: saveJson
-        },
-        function (data, status) {
-            if (status.toLowerCase() == "success") {
-                var url = document.URL.split('?')[0];              
-                prompt("The project is saved. Use the following URL to restore the project:", url + "?save=" + data);
-            }
-            else {
-                alert("save: " + status);
-            }
-        });
-});
-
 var divNodeSizeRange;
 var divNodeColorPickers;
 var divNodeColorPickersDiscrete;
@@ -455,32 +468,28 @@ function loadExampleData() {
             .text("default data")
             .css({ color: 'green' });
     });
-    $.get('data/labels.txt', function (text) {
-        parseLabels(text);
-        //$('#shared-labels').css({ color: 'green' });
-        $('#label-similarity-matrix')
-            .text("default data")
-            .css({ color: 'green' });
-    });
     $.get('data/mat1.txt', function (text) {
         parseSimilarityMatrix(text, dataSets[0]);
         //$('#d1-mat').css({ color: 'green' });
-        $('#label-attributes')
+        $('#label-similarity-matrix')
             .text("default data")
             .css({ color: 'green' });
     });
     $.get('data/attributes1.txt', function (text) {
         parseAttributes(text, dataSets[0]);
         //$('#d1-att').css({ color: 'green' });
-        $('#label-labels')
+        $('#label-attributes')
             .text("default data")
             .css({ color: 'green' });
 
-        if (dataSets[0].attributes) {
-            $('#select-attribute').empty();
-            for (var i = 0; i < dataSets[0].attributes.columnNames.length; ++i) {
-                var columnName = dataSets[0].attributes.columnNames[i];
-                $('#select-attribute').append('<option value = "' + columnName + '">' + columnName + '</option>');            }            $('#div-set-node-scale').css({ visibility: 'visible' });            $('#div-node-size').css({ visibility: 'visible' });            $('#div-node-color-pickers').css({ visibility: 'visible' });            $('#div-node-color-pickers-discrete').css({ visibility: 'visible' });            if ($('#div-node-size').length > 0) divNodeSizeRange = $('#div-node-size').detach();            if ($('#div-node-color-pickers').length > 0) divNodeColorPickers = $('#div-node-color-pickers').detach();            if ($('#div-node-color-pickers-discrete').length > 0) divNodeColorPickersDiscrete = $('#div-node-color-pickers-discrete').detach();            //var attribute = $('#select-attribute').val();            //setupNodeSizeRangeSlider(attribute); // default option            $('#select-node-size-color').val('node-default');            $('#select-attribute').prop("disabled", "disabled");            setupCrossFilter(dataSets[0].attributes);        }
+        setupAttributeTab();
+    });
+    $.get('data/labels.txt', function (text) {
+        parseLabels(text);
+        //$('#shared-labels').css({ color: 'green' });
+        $('#label-labels')
+            .text("default data")
+            .css({ color: 'green' });
     });
 
     $('#load-example-data').button().prop("disabled", "disabled");
@@ -491,6 +500,14 @@ function loadExampleData() {
 $('#button-apply-filter').button().click(function () {
     applyFilterButtonOnClick();
 });
+
+function setupAttributeTab() {
+    if (dataSets[0].attributes) {
+        $('#select-attribute').empty();
+        for (var i = 0; i < dataSets[0].attributes.columnNames.length; ++i) {
+            var columnName = dataSets[0].attributes.columnNames[i];
+            $('#select-attribute').append('<option value = "' + columnName + '">' + columnName + '</option>');        }        $('#div-set-node-scale').css({ visibility: 'visible' });        $('#div-node-size').css({ visibility: 'visible' });        $('#div-node-color-pickers').css({ visibility: 'visible' });        $('#div-node-color-pickers-discrete').css({ visibility: 'visible' });        if ($('#div-node-size').length > 0) divNodeSizeRange = $('#div-node-size').detach();        if ($('#div-node-color-pickers').length > 0) divNodeColorPickers = $('#div-node-color-pickers').detach();        if ($('#div-node-color-pickers-discrete').length > 0) divNodeColorPickersDiscrete = $('#div-node-color-pickers-discrete').detach();        $('#select-node-size-color').val('node-default');        $('#select-attribute').prop("disabled", "disabled");        setupCrossFilter(dataSets[0].attributes);    }
+}
 
 function applyFilterButtonOnClick() {
     if (!dataSets[0].attributes.filteredRecords) return;
