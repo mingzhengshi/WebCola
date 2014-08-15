@@ -385,11 +385,24 @@ $("#div-load-data-options").click(function () {
     }
 });
 
-// Set up data upload buttons
+var serverFileNameCoords: string;
+var serverFileNameMatrix: string;
+var serverFileNameAttr: string;
+var serverFileNameLabels: string;
+
+var TYPE_COORD: string = "coordinates";
+var TYPE_MATRIX: string = "matrix";
+var TYPE_ATTR: string = "attributes";
+var TYPE_LABEL: string = "labels";
+
 $('#select-coords').button();
 $('#upload-coords').button().click(function () {
     var file = (<any>$('#select-coords').get(0)).files[0];
     if (file) {
+        // 1. upload the file to server
+        uploadTextFile(file, TYPE_COORD);
+
+        // 2. also load data locally
         loadCoordinates(file);
         //$('#shared-coords').css({ color: 'green' });
         $('#label-coords')
@@ -397,6 +410,7 @@ $('#upload-coords').button().click(function () {
             .css({ color: 'green' });
     }
 });
+
 $('#select-matrix-1').button();
 $('#upload-matrix-1').button().click(function () {
     var file = (<any>$('#select-matrix-1').get(0)).files[0];
@@ -408,6 +422,7 @@ $('#upload-matrix-1').button().click(function () {
             .css({ color: 'green' });
     }
 });
+
 $('#select-attr-1').button();
 $('#upload-attr-1').button().click(function () {
     var file = (<any>$('#select-attr-1').get(0)).files[0];
@@ -421,6 +436,7 @@ $('#upload-attr-1').button().click(function () {
         setupAttributeTab();
     }
 });
+
 $('#select-labels').button();
 $('#upload-labels').button().click(function () {
     var file = (<any>$('#select-labels').get(0)).files[0];
@@ -432,6 +448,28 @@ $('#upload-labels').button().click(function () {
             .css({ color: 'green' });
     }
 });
+
+function uploadTextFile(file, fileType: string) {
+    var reader = new FileReader();
+    reader.readAsText(file);
+
+    reader.onload = function () {
+        parseCoordinates(reader.result);
+        $.post("upload.aspx",
+            {
+                fileText: reader.result,
+                type: fileType
+            },
+            function (data, status) {
+                if (status.toLowerCase() == "success") {
+
+                }
+                else {
+                    //alert("Loading is: " + status + "\nData: " + data);
+                }
+            });
+    }
+}
 
 /*
 $('#select-matrix-2').button();
