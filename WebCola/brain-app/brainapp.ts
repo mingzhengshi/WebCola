@@ -89,6 +89,12 @@ class SaveFile {
     // brain apps
     saveApps: SaveApp[];
 
+    // user-uploaded file names
+    serverFileNameCoord: string;
+    serverFileNameMatrix: string;
+    serverFileNameAttr: string;
+    serverFileNameLabel: string;
+
     constructor() {
         this.saveApps = new Array(4);
         for (var i = 0; i < 4; i++) {
@@ -385,11 +391,6 @@ $("#div-load-data-options").click(function () {
     }
 });
 
-var serverFileNameCoords: string;
-var serverFileNameMatrix: string;
-var serverFileNameAttr: string;
-var serverFileNameLabels: string;
-
 var TYPE_COORD: string = "coordinates";
 var TYPE_MATRIX: string = "matrix";
 var TYPE_ATTR: string = "attributes";
@@ -415,6 +416,10 @@ $('#select-matrix-1').button();
 $('#upload-matrix-1').button().click(function () {
     var file = (<any>$('#select-matrix-1').get(0)).files[0];
     if (file) {
+        // 1. upload the file to server
+        uploadTextFile(file, TYPE_MATRIX);
+
+        // 2. also load data locally
         loadSimilarityMatrix(file, dataSets[0]);
         //$('#d1-mat').css({color: 'green'});
         $('#label-similarity-matrix')
@@ -427,6 +432,10 @@ $('#select-attr-1').button();
 $('#upload-attr-1').button().click(function () {
     var file = (<any>$('#select-attr-1').get(0)).files[0];
     if (file) {
+        // 1. upload the file to server
+        uploadTextFile(file, TYPE_ATTR);
+
+        // 2. also load data locally
         loadAttributes(file, dataSets[0]);
         //$('#d1-att').css({ color: 'green' });
         $('#label-attributes')
@@ -441,6 +450,10 @@ $('#select-labels').button();
 $('#upload-labels').button().click(function () {
     var file = (<any>$('#select-labels').get(0)).files[0];
     if (file) {
+        // 1. upload the file to server
+        uploadTextFile(file, TYPE_LABEL);
+
+        // 2. also load data locally
         loadLabels(file);
         //$('#shared-labels').css({ color: 'green' });
         $('#label-labels')
@@ -451,10 +464,8 @@ $('#upload-labels').button().click(function () {
 
 function uploadTextFile(file, fileType: string) {
     var reader = new FileReader();
-    reader.readAsText(file);
 
     reader.onload = function () {
-        parseCoordinates(reader.result);
         $.post("upload.aspx",
             {
                 fileText: reader.result,
@@ -462,13 +473,26 @@ function uploadTextFile(file, fileType: string) {
             },
             function (data, status) {
                 if (status.toLowerCase() == "success") {
-
+                    if (fileType == TYPE_COORD) {
+                        saveObj.serverFileNameCoord = data;
+                    }
+                    else if (fileType == TYPE_MATRIX) {
+                        saveObj.serverFileNameMatrix = data;
+                    }
+                    else if (fileType == TYPE_ATTR) {
+                        saveObj.serverFileNameAttr = data;
+                    }
+                    else if (fileType == TYPE_LABEL) {
+                        saveObj.serverFileNameLabel = data;
+                    }
                 }
                 else {
                     //alert("Loading is: " + status + "\nData: " + data);
                 }
             });
     }
+
+    reader.readAsText(file);
 }
 
 /*
