@@ -1680,12 +1680,12 @@ class Brain3DApp implements Application, Loopable {
             if (edge.visible) {
                 for (var j = 0; j < this.svgNodeBundleArray.length; j++) {
                     if (this.svgNodeBundleArray[j].id == edge.sourceNode.id) {
-                        var moduleID = -1;
+                        var nodeID = -1;
                         var bundleGroupID = -1;
                         for (var k = 0; k < this.svgNodeBundleArray.length; k++) {
                             if (this.svgNodeBundleArray[k].id == edge.targetNode.id) {
                                 if (bundleByAttribute == "none") {
-                                    moduleID = this.svgNodeBundleArray[k].moduleID;
+                                    nodeID = this.svgNodeBundleArray[k].id;
                                 }
                                 else {
                                     bundleGroupID = this.svgNodeBundleArray[k]['bundle_group_' + bundleByAttribute];
@@ -1695,8 +1695,7 @@ class Brain3DApp implements Application, Loopable {
                         }
 
                         if (bundleByAttribute == "none") {
-                            if (moduleID >= 0) {
-                                //var nodeName = "root.module" + moduleID + "." + edge.targetNode.id;
+                            if (nodeID >= 0) {
                                 var nodeName = "root." + edge.targetNode.id;
                                 this.svgNodeBundleArray[j].imports.push(nodeName);
                             }
@@ -1710,12 +1709,11 @@ class Brain3DApp implements Application, Loopable {
                     }
 
                     if (this.svgNodeBundleArray[j].id == edge.targetNode.id) {
-                        var moduleID = -1;
+                        var nodeID = -1;
                         for (var k = 0; k < this.svgNodeBundleArray.length; k++) {
                             if (this.svgNodeBundleArray[k].id == edge.sourceNode.id) {
-                                //moduleID = this.svgNodeBundleArray[k].moduleID;
                                 if (bundleByAttribute == "none") {
-                                    moduleID = this.svgNodeBundleArray[k].moduleID;
+                                    nodeID = this.svgNodeBundleArray[k].id;
                                 }
                                 else {
                                     bundleGroupID = this.svgNodeBundleArray[k]['bundle_group_' + bundleByAttribute];
@@ -1725,8 +1723,7 @@ class Brain3DApp implements Application, Loopable {
                         }
 
                         if (bundleByAttribute == "none") {
-                            if (moduleID >= 0) {
-                                //var nodeName = "root.module" + moduleID + "." + edge.sourceNode.id;
+                            if (nodeID >= 0) {
                                 var nodeName = "root." + edge.sourceNode.id;
                                 this.svgNodeBundleArray[j].imports.push(nodeName);
                             }
