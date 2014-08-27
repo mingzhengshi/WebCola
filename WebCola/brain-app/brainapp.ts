@@ -1593,9 +1593,9 @@ function setupCrossFilter(attrs: Attributes) {
         object["index"] = i;
 
         for (var j = 0; j < attrs.columnNames.length; ++j) {
-            //object[attrs.columnNames[j]] = attrs.getValue(attrs.columnNames[j], i);
-
             var attrValue: number;
+
+            /*
             if (j == 1) {
                 attrValue = attrs.getValue(j, i);
             }
@@ -1607,6 +1607,10 @@ function setupCrossFilter(attrs: Attributes) {
                 attrValue = attrs.getValue(j, i);
                 attrValue = parseFloat(attrValue.toFixed(2));
             }
+            */
+
+            attrValue = attrs.getValue(j, i);
+            attrValue = parseFloat(attrValue.toFixed(2));
 
             object[attrs.columnNames[j]] = attrValue;
 
@@ -1650,31 +1654,35 @@ function setupCrossFilter(attrs: Attributes) {
         dimArray.push(dim);
         var group = dim.group().reduceCount(function (d) { return d[columnName]; });
 
-        chart
-            .gap(5)
-            .width(290)
-            .height(150)
-            .dimension(dim)
-            .group(group)
-            .x(d3.scale.linear().domain([minValue, maxValue]))
-            .xAxisLabel(columnName)
-            .xUnits(function () { return 25; })
-            .centerBar(true)
-            .on("filtered", filtered)
-            .xAxis().ticks(6);
+        var numberOfBars = group.size();
 
-        // for local sample data only
-        /*
-        if (j == 1) {           
+        if (numberOfBars < 10) {
             chart
                 .width(290)
                 .height(150)
                 .dimension(dim)
                 .group(group)
-                .x(d3.scale.linear().domain([0, 10]))
+                //.x(d3.scale.linear().domain([minValue, maxValue]))
+                .x(d3.scale.linear().domain([minValue - (maxValue - minValue) * 0.2, maxValue + (maxValue - minValue) * 0.2]))
                 .xAxisLabel(columnName)
+                .xUnits(function () { return 12; }) // return 10: means the estimated number of bars in x axis is 10; dc.js uses the xUnits to automatically calculate the width of the bars              
+                .centerBar(true)
+                .on("filtered", filtered);
+        }
+        else if ((numberOfBars >= 10) && (numberOfBars < 25)) {
+            chart
+                .gap(5)
+                .width(290)
+                .height(150)
+                .dimension(dim)
+                .group(group)
+                //.x(d3.scale.linear().domain([minValue, maxValue]))
+                .x(d3.scale.linear().domain([minValue - (maxValue - minValue) * 0.05, maxValue + (maxValue - minValue) * 0.05]))
+                .xAxisLabel(columnName)
+                .xUnits(function () { return numberOfBars; })
                 .centerBar(true)
                 .on("filtered", filtered)
+                .xAxis().ticks(6);
         }
         else {
             chart
@@ -1683,14 +1691,14 @@ function setupCrossFilter(attrs: Attributes) {
                 .height(150)
                 .dimension(dim)
                 .group(group)
-                .x(d3.scale.linear().domain([minValue, maxValue]))
+                //.x(d3.scale.linear().domain([minValue, maxValue]))
+                .x(d3.scale.linear().domain([minValue - (maxValue - minValue) * 0.05, maxValue + (maxValue - minValue) * 0.05]))
                 .xAxisLabel(columnName)
-                .xUnits(function () { return 25; })               
+                .xUnits(function () { return 25; })
                 .centerBar(true)
                 .on("filtered", filtered)
                 .xAxis().ticks(6);
         }
-        */
     }
 
 	// keep track of total readings
