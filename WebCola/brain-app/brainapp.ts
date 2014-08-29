@@ -622,7 +622,7 @@ function setNodeSizeOrColor() {
         saveObj.nodeSizeAttribute = attribute;
     }
     else if (sizeOrColor == "node-color") {
-        if (attribute == "module_id") {
+        if ((attribute == "module_id") || (attribute.indexOf("_discrete") >= 0)) {
             var keyArray: number[] = [];
             var colorArray: string[] = [];
 
@@ -702,7 +702,7 @@ function selectNodeSizeColorOnChange() {
     else if (value == "node-color") {
         $('#select-attribute').prop('disabled', false);
 
-        if (attribute == "module_id") {
+        if ((attribute == "module_id") || (attribute.indexOf("_discrete") >= 0)) {
             setupColorPickerDiscrete(attribute);
         }
         else {
@@ -721,7 +721,7 @@ $('#select-attribute').on('change', function () {
         setupNodeSizeRangeSlider(attribute);
     }
     if (sizeOrColor == "node-color") {
-        if (attribute == "module_id") {
+        if ((attribute == "module_id") || (attribute.indexOf("_discrete") >= 0)) {
             setupColorPickerDiscrete(attribute);
         }
         else {
@@ -1445,7 +1445,7 @@ function initNodeColor() {
         $('#select-attribute').val(loadObj.nodeColorAttribute);
         selectNodeSizeColorOnChange();
 
-        if (loadObj.nodeColorAttribute == "module_id") {
+        if ((loadObj.nodeColorAttribute == "module_id") || (loadObj.nodeColorAttribute.indexOf("_discrete") >= 0)) {
             var keySelection = <any>document.getElementById('select-node-key');
 
             for (var i = 0; i < keySelection.length; i++) {
